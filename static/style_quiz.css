@@ -1,0 +1,135 @@
+/* Общие стили */
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f9fdf9; /* светлый фон */
+  margin: 0;
+  padding: 0;
+  color: #2e2e2e;
+}
+
+/* Карточки */
+.card {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  text-align: center;
+  border: 1px solid #e0f2e9;
+}
+
+/* Заголовки */
+h1, h2 {
+  margin-top: 0;
+  color: #1b5e20; /* тёмно‑зелёный */
+}
+
+/* Кнопки */
+button {
+  display: inline-block;
+  margin: 10px 5px;
+  padding: 10px 18px;
+  font-size: 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #4caf50; /* зелёный */
+  color: #fff;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #388e3c; /* чуть темнее при наведении */
+}
+
+button:disabled {
+  background: #c8e6c9;
+  cursor: not-allowed;
+}
+
+/* Ответы */
+.answers {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.answers .answer {
+  background: #f1f8f4;
+  color: #2e2e2e;
+  border: 1px solid #a5d6a7;
+}
+
+.answers .answer:hover {
+  background: #e8f5e9;
+}
+
+/* Прогресс */
+#progress-container {
+  width: 100%;
+  background: #e0f2e9;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 15px 0;
+}
+
+#progress-bar {
+  height: 12px;
+  width: 0%;
+  background: #43a047;
+  transition: width 0.4s ease;
+}
+
+#progress-text {
+  font-size: 14px;
+  color: #1b5e20;
+}
+
+/* Таблица результатов */
+#resultsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+#resultsTable th, #resultsTable td {
+  padding: 8px;
+  border: 1px solid #a5d6a7;
+}
+
+#resultsTable th {
+  background: #2e7d32;
+  color: #fff;
+}
+
+#resultsTable tr:nth-child(even) {
+  background: #f1f8f4;
+}
+
+/* Ссылки */
+a {
+  color: #2e7d32;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Поля ввода */
+input[type="text"], input[type="number"] {
+  width: 90%;
+  padding: 8px;
+  margin: 8px 0;
+  border: 1px solid #a5d6a7;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #f9fdf9;
+}
+
+input:focus {
+  border-color: #43a047;
+  outline: none;
+}

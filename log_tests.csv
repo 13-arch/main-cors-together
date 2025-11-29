@@ -1,0 +1,2 @@
+,user,test_file,user_file,result,passed_tests,failed_tests,date,time
+0,1234,testone.csv,funck.py,passed,"{'passed': {'params': '(5, 5)', 'answer': '10'}}",{},26.11.2025,15:33:38.202861

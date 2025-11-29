@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Результаты тестов</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <h1>📊 Результаты тестов</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Пользователь</th>
+                <th>Тест</th>
+                <th>Файл пользователя</th>
+                <th>Результат</th>
+                <th>Пройдено</th>
+                <th>Провалено</th>
+                <th>Дата</th>
+                <th>Время</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td>{{ row.user }}</td>
+                <td>{{ row.test_file }}</td>
+                <td>{{ row.user_file }}</td>
+                <td>{{ row.result }}</td>
+                <td>{{ row.passed_tests }}</td>
+                <td>{{ row.failed_tests }}</td>
+                <td>{{ row.date }}</td>
+                <td>{{ row.time }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/check"><button>Вернуться на выбор теста</button></a>
+</body>
+</html>

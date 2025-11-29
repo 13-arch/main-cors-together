@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Главная страница</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <h1>Добро пожаловать, {{ username }}!</h1>
+    <p>Вы успешно вошли в систему.</p>
+    <a href="/create"><button type="button">Создать тест</button></a>
+    <a href="/upload"><button type="button">Пройти тест</button></a>
+    <a href="/check"><button type="button">Проверить тесты</button></a>
+    <a href="/quiz"><button id="start_but">Перейти к Квизу</button></a>
+    
+    <a href="/logout"><button type="button">Выход</button></a>
+    <script src="/static/main.js"></script>
+</body>
+</html>

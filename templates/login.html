@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <h2>Форма входа</h2>
+    <form method="post" action="/login">
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+        <label for="username">Имя пользователя:</label>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <button type="submit">Войти</button>
+        <a href="/register"><button type="button">Регистрация</button></a>
+
+    </form>
+</body>
+</html>

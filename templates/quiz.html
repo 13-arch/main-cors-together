@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quiz Game</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='style_quiz.css') }}">
+
+  <script>
+    const CURRENT_USER = "{{ username }}";
+    const CURRENT_ROLE = "{{ role }}";
+  </script>
+</head>
+<body>
+  <div id="block1" class="card" style="display:block;">
+    <h1>Quiz game</h1>
+    <p>Игрок: <b>{{ username }}</b> (<span id="roleSpan">{{ role }}</span>)</p>
+
+    <button id="start_but">Начать тест</button>
+    <button id="add_but" style="display:none;">Добавить вопрос</button>
+    <button id="results_but" style="display:none;">Результаты учеников</button>
+
+    <br><br>
+    <a href="/home">Назад в профиль</a>
+  </div>
+
+  <div id="block2" class="card" style="display:none;">
+    <div id="progress-container"><div id="progress-bar"></div></div>
+    <p id="progress-text"></p>
+    <p id="quest1">Загрузка...</p>
+    <div class="answers">
+      <button class="answer"></button>
+      <button class="answer"></button>
+      <button class="answer"></button>
+      <button class="answer"></button>
+    </div>
+  </div>
+
+  <div id="block3" class="card" style="display:none;">
+    <h1>ТЕСТ ЗАВЕРШЕН</h1>
+    <p id="score"></p>
+    <button id="back">В главное меню</button>
+    <a href="/home">Назад в профиль</a>
+  </div>
+
+  <div id="addForm" class="card" style="display:none;">
+    <h2>Новый вопрос</h2>
+    <input id="newQuestion" type="text" placeholder="Текст вопроса"><br>
+    <input class="newAnswer" type="text" placeholder="Ответ 1"><br>
+    <input class="newAnswer" type="text" placeholder="Ответ 2"><br>
+    <input class="newAnswer" type="text" placeholder="Ответ 3"><br>
+    <input class="newAnswer" type="text" placeholder="Ответ 4"><br>
+    <input id="newCorrect" type="number" placeholder="Номер правильного (0-3)"><br>
+    <button id="saveQuestion">Сохранить</button>
+    <button id="cancelAdd">Отмена</button>
+  </div>
+
+  <div id="resultsBlock" class="card" style="display:none;">
+    <h2>Результаты</h2>
+    <div style="max-height:300px; overflow:auto;">
+      <table id="resultsTable" border="1" style="width:100%; border-collapse:collapse;">
+        <thead><tr><th>Пользователь</th><th>Счет</th><th>Всего</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <button id="closeResults">Закрыть</button>
+  </div>
+
+  <!-- Подключаем только pract.js (логика) и main.js (таймер AFK) -->
+  <script src="{{ url_for('static', path='pract.js') }}"></script>
+  <script src="{{ url_for('static', path='main.js') }}"></script>
+</body>
+</html>

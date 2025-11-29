@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Файлы в папке</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <h1>Выберите тест для прохождения</h1>
+    {% for file in files %}
+        <a href="/upload/{{ file }}"><button>{{ file }}</button></a><br>
+    {% endfor %}
+    <a href="/home"><button>Вернуться на главную</button></a>
+</body>
+</html>

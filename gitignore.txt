@@ -1,0 +1,6 @@
+*.pyc
+server_logs.csv
+__pycache__/
+env/
+codes/
+tests/

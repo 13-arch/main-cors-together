@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Загрузка файла и строки</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <h2>Загрузка файла</h2>
+    <p>{{ task }}</p>
+
+    <p>{{ answer }}</p>
+
+    <form method="post" action="/upload/{{ test }}" enctype="multipart/form-data">
+
+        <label for="file">Выберите файл:</label>
+        <input type="file" id="file" name="file" required>
+
+        <button type="submit">Отправить</button>
+    </form>
+    <a href="/upload"><button>Вернуться на выбор теста</button></a>
+</body>
+</html>

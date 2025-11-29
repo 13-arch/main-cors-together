@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание теста</title>
+    <link rel="stylesheet" href="static/create_test.css">
+    <style>
+        /* Немного стилей, чтобы инпуты стояли в ряд */
+        .answer-options {
+            display: flex;
+            gap: 10px;
+        }
+        .answer-option {
+            flex: 1;
+        }
+        .answer-option label {
+            font-size: 12px;
+            color: #7f8c8d;
+            display: block;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Создание теста</h1>
+            <p>Заполните параметры и ожидаемые результаты</p>
+        </div>
+        
+        <form id="test-form" action="/create" method="post">
+            <div class="test-blocks">
+                <div class="test-block">
+                    <h3>Настройки</h3>
+                    
+                    <div class="input-group">
+                        <label for="test-name">Название файла (без .csv)</label>
+                        <input type="text" name="name_of_test" id="test-name" placeholder="sum_test" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="test-task">Описание задания</label>
+                        <input type="text" name="task" id="test-task" placeholder="Напишите функцию, которая..." required>
+                    </div>
+                    
+                    <input type="hidden" name="test_data" id="hidden-test-data">
+
+                    <div class="small-blocks" id="cases-container">
+                        <div class="small-block test-case">
+                            <h4>Тест-кейс 1</h4>
+                            <div class="answer-options">
+                                <div class="answer-option">
+                                    <label>Параметр 1</label>
+                                    <input type="text" class="param1" required>
+                                </div>
+                                <div class="answer-option">
+                                    <label>Параметр 2</label>
+                                    <input type="text" class="param2" required>
+                                </div>
+                                <div class="answer-option">
+                                    <label>Результат</label>
+                                    <input type="text" class="result" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="button" class="add-button" id="add-blocks-btn">+</button>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button type="submit" style="padding: 10px 20px; font-size: 16px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">Сохранить тест</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="static/create_test.js"></script>
+</body>
+</html>
