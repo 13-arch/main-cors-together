@@ -27,48 +27,58 @@ app = FastAPI()
 app.mount('/static', StaticFiles(directory='static'), name='static')
 templates = Jinja2Templates(directory="templates")
 
-# -------------------------------
 sessions = {}
 USERS_FILE = os.path.join(app.root_path, "users.csv")
-QUESTIONS_CSV = os.path.join(app.root_path, "static", "questions.csv")
+# УДАЛЕНО: QUESTIONS_CSV больше не используется, вопросы хранятся в QUIZZES_DIR
 RESULTS_CSV = os.path.join(app.root_path, "static", "results.csv")
-SESSION_TTL = datetime.timedelta(hours=2)  # время жизни сессии
-WHITE_LIST = ['/', '/login', '/logout', '/register', '/update_password']  # страницы без авторизации
+# НОВОЕ: Папка для тем викторин
+QUIZZES_DIR = os.path.join(app.root_path, "quizzes") 
 
+SESSION_TTL = datetime.timedelta(hours=2) 
+WHITE_LIST = ['/', '/login', '/logout', '/register', '/update_password'] 
+
+# --- МОДЕЛИ DTO (Pydantic) ---
+
+# Модель одного вопроса (используется для TopicPayload)
 class Question(BaseModel):
     question: str
     answers: List[str]
     correct: int
 
+# НОВОЕ: Модель для массового добавления вопросов
+class TopicPayload(BaseModel):
+    topic_name: str
+    questions: List[Question]
+
+# ОБНОВЛЕНО: Модель результата теперь включает тему
 class Result(BaseModel):
-    username: str
     score: int
     total: int
+    topic: str
 
-# -------------------------------
-# Инициализация необходимых файлов/папок
+# --- ФУНКЦИИ УТИЛИТЫ ---
+
 def ensure_files():
     if not os.path.exists(USERS_FILE):
         with open(USERS_FILE, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             writer.writerow(["user_name", "user_password", "check_password", "role"])
 
-    if not os.path.exists(QUESTIONS_CSV):
-        with open(QUESTIONS_CSV, "w", newline="", encoding="utf-8") as f:
-            writer = csv.writer(f)
-            writer.writerow(["question", "answer1", "answer2", "answer3", "answer4", "correct"])
+    # УДАЛЕНО: Старая логика создания QUESTIONS_CSV
 
+    # ОБНОВЛЕНО: Добавлена колонка topic в RESULTS_CSV
     if not os.path.exists(RESULTS_CSV):
         with open(RESULTS_CSV, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
-            writer.writerow(["username", "score", "total"])
+            writer.writerow(["username", "score", "total", "topic"]) 
 
     os.makedirs('tests', exist_ok=True)
     os.makedirs('codes', exist_ok=True)
+    # НОВОЕ: Создание папки для тем викторин
+    os.makedirs(QUIZZES_DIR, exist_ok=True)
 
 ensure_files()
 
-# -------------------------------
 def get_session_user(request: Request):
     session_id = request.cookies.get('session_id')
     if not session_id or session_id not in sessions:
@@ -77,18 +87,17 @@ def get_session_user(request: Request):
     if datetime.datetime.now() - created > SESSION_TTL:
         del sessions[session_id]
         return None
-    # обновляем время активности
     sessions[session_id]["created"] = datetime.datetime.now()
     return sessions[session_id]
+
+# --- MIDDLEWARE ---
 
 @app.middleware("http")
 @server_logs
 async def check_session(request: Request, call_next):
-    # статические файлы и белый список пропускаем
     if request.url.path.startswith('/static') or request.url.path in WHITE_LIST:
         return await call_next(request)
 
-    # API без сессии — 401, страницы — редирект на /login
     session_data = get_session_user(request)
     if not session_data:
         if request.url.path.startswith("/api"):
@@ -97,8 +106,8 @@ async def check_session(request: Request, call_next):
 
     return await call_next(request)
 
-# -------------------------------
-# Страницы
+# --- РОУТЫ СТРАНИЦ (GET) ---
+
 @app.get("/", response_class=HTMLResponse)
 @app.get("/login", response_class=HTMLResponse)
 @server_logs
@@ -113,7 +122,7 @@ def update_password(request: Request):
 @app.get("/register", response_class=HTMLResponse)
 @server_logs
 def get_register_page(request: Request): 
-    # доступ только админу
+    # ВАШ ОРИГИНАЛЬНЫЙ КОД
     if request.cookies.get('role') == 'admin':
         return templates.TemplateResponse("register.html", {"request": request})
     else:
@@ -154,7 +163,6 @@ async def get_upload_tests_page(request: Request):
 @app.get('/check/{test}', response_class=HTMLResponse)
 @server_logs
 async def check_passed_test(request: Request, test: str):
-    # предполагается наличие log_tests.csv
     if not os.path.exists("log_tests.csv"):
         return templates.TemplateResponse("check_test.html", {"request": request, "rows": []})
     df = pd.read_csv("log_tests.csv")
@@ -203,11 +211,10 @@ def quiz_page(request: Request):
         "role": user['role']
     })
 
-# -------------------------------
-# Админ-страница конфигов паролей
 @app.get('/password_info', response_class=HTMLResponse)
 @server_logs
 def password_info(request: Request):
+    # ВАШ ОРИГИНАЛЬНЫЙ КОД
     if request.cookies.get('role') == 'admin':
         min_symbols, digits, symbols, lower_letters, upper_letters = update_password_info('password_info.json')
         return templates.TemplateResponse("password_info.html", {
@@ -221,14 +228,15 @@ def password_info(request: Request):
     else:
         return templates.TemplateResponse("403.html", {"request": request})
 
-# -------------------------------
-# Аутентификация
+# --- РОУТЫ СТРАНИЦ (POST) ---
+
 @app.post("/login")
 @server_logs
 def login(request: Request,
           username: str = Form(...),
           password: str = Form(...)):
 
+    # ВАШ ОРИГИНАЛЬНЫЙ КОД
     users = pd.read_csv(USERS_FILE)
     users['user_name'] = users['user_name'].astype(str)
 
@@ -257,6 +265,7 @@ def register(request: Request,
              password: str = Form(...),
              confirm_password: str = Form(...)):
 
+    # ВАШ ОРИГИНАЛЬНЫЙ КОД
     users = pd.read_csv(USERS_FILE)
 
     result_of_password = check_password(password)
@@ -274,7 +283,6 @@ def register(request: Request,
         writer = csv.writer(f)
         writer.writerow(new_row)
 
-    # создаём сессию сразу после регистрации
     session_id = str(uuid.uuid4())
     sessions[session_id] = {
         "username": username,
@@ -293,6 +301,7 @@ def post_update_password(request: Request,
                          password: str = Form(...),
                          confirm_password: str = Form(...)):
 
+    # ВАШ ОРИГИНАЛЬНЫЙ КОД
     users = pd.read_csv(USERS_FILE)
 
     result_of_password = check_password(password)
@@ -306,23 +315,20 @@ def post_update_password(request: Request,
     if username is None:
         return RedirectResponse(url='/login', status_code=302)
 
-    # обновляем пароль и сбрасываем флаг проверки
     users.loc[users["user_name"] == username, "user_password"] = hash_password(password)
     users.loc[users["user_name"] == username, "check_password"] = False
     users.to_csv(USERS_FILE, index=False)
 
     return RedirectResponse(url='/home', status_code=302)
 
-# -------------------------------
-# Работа с тестами (создание и загрузка решений)
 @app.post("/create")
 @server_logs
 def create_test(request: Request,
                 name_of_test: str = Form(...),
-                task: str = Form(...),  # task может отображаться в шаблоне, но в файл не идёт
+                task: str = Form(...),  
                 test_data: str = Form(...)):
 
-    # test_data ожидается как JSON-строка: [[ "1", "2", "3" ], [ "4", "5", "9" ]]
+    # ВАШ ОРИГИНАЛЬНЫЙ КОД
     try:
         data_list = json.loads(test_data)
     except json.JSONDecodeError:
@@ -333,7 +339,6 @@ def create_test(request: Request,
         writer = csv.writer(f)
         writer.writerow(["params", "answer"])
         for one_test in data_list:
-            # последний элемент — ожидаемый результат
             result = int(one_test[-1])
             params_items = one_test[:-1]
             params = tuple(int(i) for i in params_items)
@@ -347,23 +352,19 @@ async def create_upload_file(request: Request,
                              test: str,
                              file: UploadFile = File(...)):
 
+    # ВАШ ОРИГИНАЛЬНЫЙ КОД
     username = request.cookies.get("username")
     if not username:
         return RedirectResponse(url="/login", status_code=302)
 
-    # сохраняем код пользователя
     safe_filename = f"{username}_{file.filename}"
     file_path = os.path.join("codes", safe_filename)
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    # прогоняем код по тестам
     result = testing_funcktion_from_file(file_path, f'{test}.csv', username)
-    # result — кортеж для логирования, в интерфейс отдаём понятный ответ из индекса 3
     return templates.TemplateResponse("tests.html", {"request": request, 'answer': result[3], "test": test})
 
-# -------------------------------
-# Конфигурация требований к паролю (админ)
 @app.post('/password_info')
 @server_logs
 def post_password_info(request: Request,
@@ -373,7 +374,7 @@ def post_password_info(request: Request,
                        lower_letters: Optional[bool] = Form(False, alias="lower_letters"),
                        upper_letters: Optional[bool] = Form(False, alias="upper_letters")):
 
-    # доступ только админу
+    # ВАШ ОРИГИНАЛЬНЫЙ КОД
     if request.cookies.get('role') != 'admin':
         return templates.TemplateResponse("403.html", {"request": request})
 
@@ -388,10 +389,8 @@ def post_password_info(request: Request,
     with open('password_info.json', 'w', encoding='utf-8') as f:
         json.dump(password_info, f, ensure_ascii=False, indent=2)
 
-    # загрузка значений обратно в страницу
     min_symbols_web, digits_web, symbols_web, lower_letters_web, upper_letters_web = update_password_info('password_info.json')
 
-    # всем пользователям требуется перепроверка пароля
     users = pd.read_csv(USERS_FILE)
     users['check_password'] = True
     users.to_csv(USERS_FILE, index=False)
@@ -406,49 +405,75 @@ def post_password_info(request: Request,
         'answer': 'Загружено успешно'
     })
 
-# -------------------------------
-# API для квиза
+# --- НОВЫЕ API ДЛЯ ТЕМ И МАССОВОГО ДОБАВЛЕНИЯ ВИКТОРИН ---
+
+# 1. НОВОЕ: Получить список доступных тем
+@app.get("/api/topics")
+def api_get_topics():
+    # Сканируем папку quizzes
+    files = [f.replace('.csv', '') for f in os.listdir(QUIZZES_DIR) if f.endswith('.csv')]
+    return {"topics": files}
+
+# 2. НОВОЕ: Получить вопросы по конкретной теме
 @app.get("/api/questions")
-def api_get_questions(request: Request):
+def api_get_questions_by_topic(request: Request, topic: str):
     user = get_session_user(request)
     if not user:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
+    file_path = os.path.join(QUIZZES_DIR, f"{topic}.csv")
+    if not os.path.exists(file_path):
+        return []
+    
     questions = []
-    if os.path.exists(QUESTIONS_CSV):
-        with open(QUESTIONS_CSV, newline="", encoding="utf-8") as f:
+    try:
+        with open(file_path, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for row in reader:
                 questions.append({
                     "question": row["question"],
-                    "answers": [row["answer1"], row["answer2"], row["answer3"], row["answer4"]],
+                    "answers": [row.get("answer1", ""), row.get("answer2", ""), row.get("answer3", ""), row.get("answer4", "")],
                     "correct": int(row["correct"])
                 })
+    except Exception as e:
+        print(f"Ошибка чтения файла {topic}: {e}")
+        return []
+        
     return questions
 
-@app.post("/api/questions")
-def api_save_question(q: Question, request: Request):
+# 3. НОВОЕ: Сохранить пачку вопросов в тему (Админка)
+@app.post("/api/save_topic")
+def api_save_topic_questions(payload: TopicPayload, request: Request):
     user = get_session_user(request)
-    if not user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    if user['role'] != 'admin':
+    if not user or user['role'] != 'admin':
         raise HTTPException(status_code=403, detail="Доступ запрещен")
+    
+    filename = f"{payload.topic_name}.csv"
+    file_path = os.path.join(QUIZZES_DIR, filename)
+    file_exists = os.path.exists(file_path)
+    
+    try:
+        with open(file_path, "a", newline="", encoding="utf-8") as f:
+            fieldnames = ["question", "answer1", "answer2", "answer3", "answer4", "correct"]
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            
+            if not file_exists:
+                writer.writeheader()
+                
+            for q in payload.questions:
+                writer.writerow({
+                    "question": q.question,
+                    "answer1": q.answers[0],
+                    "answer2": q.answers[1],
+                    "answer3": q.answers[2],
+                    "answer4": q.answers[3],
+                    "correct": q.correct
+                })
+        return {"status": "ok", "message": f"Saved {len(payload.questions)} questions to {payload.topic_name}"}
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
-    file_exists = os.path.exists(QUESTIONS_CSV)
-    with open(QUESTIONS_CSV, "a", newline="", encoding="utf-8") as f:
-        fieldnames = ["question", "answer1", "answer2", "answer3", "answer4", "correct"]
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        if not file_exists:
-            writer.writeheader()
-        writer.writerow({
-            "question": q.question,
-            "answer1": q.answers[0],
-            "answer2": q.answers[1],
-            "answer3": q.answers[2],
-            "answer4": q.answers[3],
-            "correct": q.correct
-        })
-    return {"status": "ok"}
+# --- API РЕЗУЛЬТАТОВ ---
 
 @app.get("/api/results")
 def api_load_results(request: Request):
@@ -474,19 +499,21 @@ def api_save_result(r: Result, request: Request):
 
     file_exists = os.path.exists(RESULTS_CSV)
     with open(RESULTS_CSV, "a", newline="", encoding="utf-8") as f:
-        fieldnames = ["username", "score", "total"]
+        # ОБНОВЛЕНО: fieldnames теперь включает 'topic'
+        fieldnames = ["username", "score", "total", "topic"] 
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         if not file_exists:
             writer.writeheader()
         writer.writerow({
             "username": user['username'],
             "score": r.score,
-            "total": r.total
+            "total": r.total,
+            "topic": r.topic # <-- СОХРАНЯЕМ ТЕМУ
         })
     return {"status": "saved"}
 
-# -------------------------------
-# 404 — в конце, чтобы не перехватывать существующие маршруты
+# --- ОБРАБОТКА 404 ---
+
 @app.get("/{url_path:path}", response_class=HTMLResponse)
 @server_logs
 async def not_found_catch_all(request: Request, url_path: str):

@@ -1,13 +1,12 @@
-/* Общие стили */
+
 body {
   font-family: "Segoe UI", Arial, sans-serif;
-  background: #f9fdf9; /* светлый фон */
+  background: #f9fdf9; 
   margin: 0;
   padding: 0;
   color: #2e2e2e;
 }
 
-/* Карточки */
 .card {
   max-width: 600px;
   margin: 40px auto;
@@ -19,13 +18,11 @@ body {
   border: 1px solid #e0f2e9;
 }
 
-/* Заголовки */
 h1, h2 {
   margin-top: 0;
-  color: #1b5e20; /* тёмно‑зелёный */
+  color: #1b5e20; 
 }
 
-/* Кнопки */
 button {
   display: inline-block;
   margin: 10px 5px;
@@ -34,13 +31,13 @@ button {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  background: #4caf50; /* зелёный */
+  background: #4caf50; 
   color: #fff;
   transition: background 0.3s ease;
 }
 
 button:hover {
-  background: #388e3c; /* чуть темнее при наведении */
+  background: #388e3c;
 }
 
 button:disabled {
@@ -48,7 +45,6 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Ответы */
 .answers {
   display: flex;
   flex-direction: column;
@@ -66,7 +62,6 @@ button:disabled {
   background: #e8f5e9;
 }
 
-/* Прогресс */
 #progress-container {
   width: 100%;
   background: #e0f2e9;
@@ -87,7 +82,6 @@ button:disabled {
   color: #1b5e20;
 }
 
-/* Таблица результатов */
 #resultsTable {
   width: 100%;
   border-collapse: collapse;
@@ -108,7 +102,6 @@ button:disabled {
   background: #f1f8f4;
 }
 
-/* Ссылки */
 a {
   color: #2e7d32;
   text-decoration: none;
@@ -118,7 +111,6 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Поля ввода */
 input[type="text"], input[type="number"] {
   width: 90%;
   padding: 8px;
@@ -132,4 +124,129 @@ input[type="text"], input[type="number"] {
 input:focus {
   border-color: #43a047;
   outline: none;
+}
+/* --- Стили для выбора темы (block1) --- */
+
+.menu-section {
+  margin-bottom: 25px;
+  padding: 15px;
+  border: 1px solid #e0f2e9;
+  border-radius: 8px;
+  background: #f9fdf9;
+}
+
+.topics-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.btn-topic {
+  background: #2196F3; /* Синий */
+  color: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+
+.btn-topic:hover {
+  background: #1976D2;
+}
+
+/* --- Стили для админ-панели --- */
+
+.btn-admin {
+  background: #FF9800; /* Оранжевый */
+  margin: 5px;
+}
+
+/* --- Стили для формы добавления вопросов (addForm) --- */
+
+.wide-card {
+  max-width: 800px;
+}
+
+.form-group {
+  text-align: left;
+  margin-bottom: 15px;
+}
+
+.form-group input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.question-fieldset {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  text-align: left;
+}
+
+.question-fieldset legend {
+  font-weight: bold;
+  color: #1b5e20;
+  padding: 0 10px;
+}
+
+.question-fieldset input {
+  margin-top: 5px;
+  padding: 8px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.answers-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.q-answer, .q-text {
+  width: 100%;
+}
+
+.q-correct {
+  width: 50px;
+  text-align: center;
+}
+
+.admin-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.admin-actions .spacer {
+  flex-grow: 1;
+}
+
+/* --- Стили для прохождения теста (block2) и результатов (block3) --- */
+
+.score-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #e0f2e9;
+  border: 6px solid #4CAF50;
+  margin: 20px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#final-score-val {
+  font-size: 32px;
+  font-weight: bold;
+  color: #1b5e20;
 }
