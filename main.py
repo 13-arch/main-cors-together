@@ -520,13 +520,5 @@ async def not_found_catch_all(request: Request, url_path: str):
     return templates.TemplateResponse("404.html", {"request": request})
 
 # -------------------------------
-# Запуск под SSL (опционально)
-# if __name__ == "__main__":
-#     key_path, cert_path = generate_self_signed_cert()
-#     uvicorn.run(
-#         "main:app",
-#         host="0.0.0.0",
-#         port=443,
-#         ssl_keyfile=key_path,
-#         ssl_certfile=cert_path,
-#     )
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
